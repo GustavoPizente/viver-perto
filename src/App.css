@@ -36,3 +36,89 @@
     transform: rotate(360deg);
   }
 }
+
+/* Estilos gerais */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+div {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+h2,
+h3 {
+  font-size: 1.5em;
+  text-align: center;
+}
+
+input,
+button {
+  width: 90%;
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+button {
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+/* Mapa */
+#map {
+  height: 58vh !important;
+  width: 40vh !important;
+  position: relative;
+}
+
+/* Regras responsivas */
+@media (max-width: 768px) {
+  div {
+    padding: 15px;
+  }
+
+  h2 {
+    font-size: 1.2em;
+  }
+
+  input,
+  button {
+    width: 80%;
+    font-size: 1em;
+  }
+
+  #map {
+    height: 300px;
+  }
+}
+
+@media (max-width: 480px) {
+  div {
+    padding: 10px;
+  }
+
+  h2 {
+    font-size: 1em;
+  }
+
+  input,
+  button {
+    padding: 8px;
+  }
+
+  #map {
+    height: 200px;
+  }
+}
