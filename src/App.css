@@ -1,5 +1,10 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Amatic+SC:wght@400;700&family=Inika:wght@400;700&family=Quicksand:wght@300..700&family=Shadows+Into+Light&display=swap');
+
 .App {
   text-align: center;
+  height: auto;
+  width: 90%;
 }
 
 .App-logo {
@@ -13,15 +18,37 @@
   }
 }
 
-.App-header {
-  background-color: #282c34;
+
+#root {
+  background-image: url("/public/ondas.png");
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   font-size: calc(10px + 2vmin);
-  color: white;
+  position: relative;
+  height: 100vh; /* Ocupa toda a altura da tela */
+  background-repeat: repeat-x; /* Faz a imagem se repetir horizontalmente */
+  background-size: auto; /* Tamanho da imagem, pode ajustar conforme necessário */
+  animation: moveBackground 170s linear infinite; /* Movimento contínuo */
+
+
+}
+.App-header {
+
+  background-image: url('/public/areia.jpg');
+  border-radius: 2%;
+ 
+}
+
+@keyframes moveBackground {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 100% 0; /* Move a imagem até o final */
+  }
 }
 
 .App-link {
@@ -39,14 +66,13 @@
 
 /* Estilos gerais */
 body {
-  font-family: Arial, sans-serif;
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  background-color: #0056b3;
 }
 
 div {
-  padding: 20px;
   max-width: 1200px;
   margin: 0 auto;
 }
@@ -78,15 +104,62 @@ button:hover {
 
 /* Mapa */
 #map {
-  height: 58vh !important;
-  width: 40vh !important;
+  height: 40vh ;
+  width: 50vh ;
   position: relative;
+  margin-bottom: 2%;
 }
 
 /* Regras responsivas */
 @media (max-width: 768px) {
-  div {
-    padding: 15px;
+
+
+  h2 {
+    font-size: 1.2em;
+  }
+
+  input,
+  button {
+    width: 80%;
+    font-size: 1em;
+  }
+
+  
+
+  
+  
+}
+
+@media (max-width: 480px) {
+ 
+
+  h2 {
+    font-size: 1em;
+  }
+
+  input,
+  button {
+    padding: 8px;
+  }
+
+
+}
+
+@media (min-width: 1200px){
+
+  #map {
+    width: 100vh ;
+  }
+}
+
+@media (min-width: 768px){
+
+  .apiresponse {
+    left: 50%;
+  }
+
+  #map {
+    width: 90vh ;
   }
 
   h2 {
@@ -99,26 +172,183 @@ button:hover {
     font-size: 1em;
   }
 
+
+
+  
+  
+
+}
+@media (min-width: 480px){
+
   #map {
-    height: 300px;
+    width: 60vh;
+  }
+  .apiresponse {
+    left: 20%;
+  }
+
+
+}
+
+@media (min-width: 380px){
+
+  #map {
+    width: 40vh !important;
+    height: 40vh !important;
+  }
+  .apiresponse {
+    left: 5%;
+  }
+
+
+}
+
+@media (max-width: 380px){
+
+  #map {
+    width: 40vh !important;
+    height: 35vh !important;
   }
 }
 
-@media (max-width: 480px) {
-  div {
-    padding: 10px;
-  }
 
-  h2 {
-    font-size: 1em;
-  }
 
-  input,
-  button {
-    padding: 8px;
-  }
-
-  #map {
-    height: 200px;
-  }
+.apiresponse {
+  position: absolute;
+  top: 10%;
+  width: 90%;
+  z-index: 5000;
+  border-radius: 1%;
+  background-color: #fefdfd;
+  color: black;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
 }
+
+.apiresponse h2 {
+
+  font-family: "Amatic SC", sans-serif;
+  width: 50%;
+  height: 50%;
+  display: flex;
+  justify-content: center;
+  font-size: 3vh;
+  margin-top: 12%;
+}
+
+.apiresponse h3 {
+
+  font-family: "Quicksand", sans-serif;
+  font-weight: 500;
+  width: 80%;
+  line-height: 1.0;
+  margin-bottom: 10%;
+
+}
+.apiresponse p {
+
+  font-family: "Quicksand", sans-serif;
+  margin-top: 10%;
+  background-color: #E1EEF7;
+  box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.15);
+
+}
+
+.botaofechar{
+
+  width: 50px;
+  position: absolute;
+    top: -4%;
+    left: 87%;
+}
+
+.fotosimoveis {
+
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.fotosimoveis img {
+  width: 30%;
+  height: 40%;
+}
+
+.cliqueaqui {
+
+  font-family: "Quicksand", sans-serif;
+  margin-bottom: 15%;
+  margin-top: 5%;
+  font-weight: 650;
+}
+
+#h2todosqueremos {
+
+  font-family: "Quicksand", sans-serif!important;
+  margin-bottom: -3% !important;
+}
+
+#h2daquilo {
+
+  font-family: "Quicksand", sans-serif !important;
+  margin-top: -2% !important;
+  color: black !important;
+
+}
+
+#h1 {
+
+  font-family: "Amatic SC";
+  font-size: 8vh;
+  margin: 0;
+  background-image: url('/public/viverpertofundo.png');
+  background-size: cover;
+  background-size: 100%;
+  background-repeat: no-repeat;
+  background-position: 5%;
+}
+
+.main {
+
+  padding: 3%;
+}
+
+.sol {
+
+  animation: App-logo-spin infinite 20s linear;
+  margin: -5%;
+
+
+}
+
+.entradas {
+
+  font-family: "Quicksand", sans-serif !important;
+  font-size: 2.0vh;
+  display: flex
+;
+    flex-direction: column;
+    align-items: center;
+
+
+
+}
+
+.entradas h2 {
+
+  margin-bottom: 0%;
+  width: 90%;
+}
+
+.contato {
+
+  background-color: white;
+  color: black;
+  text-decoration: none;
+  margin-top: 40%;
+  font-family: "Quicksand", sans-serif !important;
+  border-radius: 2%;
+  padding:1%;
+}
+
