@@ -69,33 +69,61 @@ const Mapa = () => {
   // Função para gerar a resposta da IA com o poema e última palavra como cidade mais próxima
   const gerarRespostaAI = async (cidade: string) => {
     try {
-      console.log("Chamando OpenAI com a cidade:", cidade); // Log para depuração
+      console.log("Chamando OpenAI com a cidade:", cidade);
       const response = await openai.chat.completions.create({
         model: "gpt-4o-mini",
         store: true,
         messages: [
           {
             role: "user",
-            content: `Escreva um poema zen de 4 linhas sobre a cidade litorânea mais proxima da cidade de ${cidade}. envie o nome dessa cidade ao final dentro de () Só vale cidades Brasileiras do sul do país, se não for o nome de uma cidade litoranea brasileira dentro de () refaça. se esse nome dentro de () for uma palavra composta deve ser unido por -`,
+            content: `Escreva 4 linhas bem curtas sobre a cidade litorânea mais próxima da cidade de ${cidade}. esse texto tem que ser zen e exaltar coisas tipicas dessa cidade (essa cidade tem necessariamente que ser a praia mais perto de ${cidade}) Envie o nome dessa cidade ao final dentro de (). Só vale cidades brasileiras do sul do país. Se não for uma cidade litorânea brasileira dentro de (), refaça. Se esse nome dentro de () for uma palavra composta, deve ser unido por -.`,
           },
         ],
       });
-
-      // Verifique se o formato da resposta está correto
+  
       console.log("Resposta da IA:", response);
-
+  
       const poema = response?.choices?.[0]?.message?.content?.trim();
       if (poema) {
-        setRespostaAI(poema);
-
-        // Extrair a última palavra (cidade mais próxima)
-        const palavras = poema.split(" ");
-        const ultimaPalavra = palavras[palavras.length - 1]; // Última palavra do poema
-        setCidadeMaisProxima(ultimaPalavra);
-        console.log("Última palavra extraída:", ultimaPalavra); // Log para depuração
-
-        // Buscar coordenadas da cidade mais próxima
-        buscarCoordenadasCidadeProxima(ultimaPalavra);
+        // Extrai a cidade mais próxima do poema
+        const cidadeProxima = poema.match(/\((.*?)\)/)?.[1]; // Captura o nome dentro dos parênteses
+  
+        if (cidadeProxima) {
+          console.log("Cidade mais próxima extraída:", cidadeProxima);
+          setCidadeMaisProxima(cidadeProxima);
+  
+          // Buscar coordenadas da cidade mais próxima
+          const buscarCoordenadasCidadeProxima = async (cidade: string) => {
+            try {
+              console.log("Buscando coordenadas para cidade mais próxima:", cidade);
+              const response = await axios.get(
+                `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
+                  cidade
+                )}`
+              );
+  
+              if (response.data.length > 0) {
+                const { lat, lon } = response.data[0];
+                setCoords({ lat: parseFloat(lat), lon: parseFloat(lon) });
+  
+                console.log(`Cidade mais próxima: ${cidade} - Latitude: ${lat}, Longitude: ${lon}`);
+  
+                // Aguarda 2 segundos antes de exibir o poema
+                setTimeout(() => {
+                  setRespostaAI(poema);
+                }, 3000);
+              } else {
+                console.error("Cidade mais próxima não encontrada.");
+              }
+            } catch (error) {
+              console.error("Erro ao buscar coordenadas da cidade mais próxima:", error);
+            }
+          };
+  
+          buscarCoordenadasCidadeProxima(cidadeProxima);
+        } else {
+          console.error("Nenhuma cidade litorânea válida foi encontrada.");
+        }
       } else {
         console.error("Nenhuma resposta válida foi recebida da OpenAI.");
       }
@@ -103,7 +131,8 @@ const Mapa = () => {
       console.error("Erro ao gerar resposta da IA:", error);
     }
   };
-
+  
+  
   // Função para buscar as coordenadas da cidade mais próxima
   const buscarCoordenadasCidadeProxima = async (cidade: string) => {
     try {
@@ -154,7 +183,7 @@ const Mapa = () => {
 
         <div className="entradas">
 
-      <h2>Digite o nome da cidade onde você mora:</h2>
+      <h2>Digite o nome da cidade onde você mora e descubra a praia mais perto:</h2>
       <input
         type="text"
         value={praia}
@@ -187,8 +216,9 @@ const Mapa = () => {
             exit={{ opacity: 0, scale: 0.9 }}
             transition={{ duration: 0.5, ease: "easeOut" }}
           >
+
             <h2>{respostaAI}</h2>
-            <h3>que tal viver mais perto da praia?</h3>
+            <h3>A praia de {cidadeMaisProxima} está perto!</h3>
 
             <div className="fotosimoveis">
               <img src="/garden2.webp" alt="Imagem 1" />
