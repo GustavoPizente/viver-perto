@@ -6,58 +6,62 @@ import L from "leaflet";
 import OpenAI from "openai";
 import { motion } from "framer-motion";
 
+// Cria Instância OpenAI
+
 const openai = new OpenAI({
-  apiKey: process.env.REACT_APP_OPENAI_API_KEY || "", // Verifique se a chave está correta
+  apiKey: process.env.REACT_APP_OPENAI_API_KEY || "",
   dangerouslyAllowBrowser: true,
 });
 
-// Define o ícone manualmente
+// Define ícone Marker
 const customIcon = new L.Icon({
   iconUrl:
     "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png",
-  iconSize: [25, 41], // Tamanho do ícone
-  iconAnchor: [12, 41], // Ponto de ancoragem
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
   popupAnchor: [1, -34],
   shadowUrl:
     "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
   shadowSize: [41, 41],
 });
 
+// Move o mapa até a cidade do input
+
 const BuscaPraia = ({ lat, lon }: { lat: number; lon: number }) => {
   const map = useMap();
 
-  // Move o mapa até a cidade com animação
   map.flyTo([lat, lon], 12, {
     animate: true,
     duration: 2,
   });
-  return <Marker position={[lat, lon]} icon={customIcon} />;
+  return <Marker position={[lat, lon]} icon={customIcon} />; // Coloca um Marcador
 };
 
 const Mapa = () => {
+  
+  
   const [praia, setPraia] = useState("");
-  const [coords, setCoords] = useState(
-    null as { lat: number; lon: number } | null
-  );
+  const [coords, setCoords] = useState(    null as { lat: number; lon: number } | null  );
   const [respostaAI, setRespostaAI] = useState("");
   const [cidadeMaisProxima, setCidadeMaisProxima] = useState("");
-
-  // Função para buscar coordenadas da cidade
+  
+  
+  // Consulta API do OpenStreetMap para buscar coordenadas da cidade do input 
   const buscarCoordenadas = async () => {
     try {
       const response = await axios.get(
-        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
+        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(  
           praia
         )}`
       );
 
-      if (response.data.length > 0) {
+      if (response.data.length > 0) {                                                             // Se existir cidade com aquele nome ele retorna as coordenadas 
         const { lat, lon } = response.data[0];
         setCoords({ lat: parseFloat(lat), lon: parseFloat(lon) });
         console.log(
           `Cidade localizada: ${praia} - Latitude: ${lat}, Longitude: ${lon}`
         );
-        gerarRespostaAI(praia);
+        gerarRespostaAI(praia);                                                                     // e envia a palavra para gerar prompt na IA.
       } else {
         alert("Cidade não encontrada.");
       }
@@ -70,7 +74,7 @@ const Mapa = () => {
   const gerarRespostaAI = async (cidade: string) => {
     try {
       console.log("Chamando OpenAI com a cidade:", cidade);
-      const response = await openai.chat.completions.create({
+      const response = await openai.chat.completions.create({                                    // Requisição para OpenAi
         model: "gpt-4o-mini",
         store: true,
         messages: [
@@ -80,34 +84,39 @@ const Mapa = () => {
           },
         ],
       });
-  
+
       console.log("Resposta da IA:", response);
-  
+
       const poema = response?.choices?.[0]?.message?.content?.trim();
-      if (poema) {
-        // Extrai a cidade mais próxima do poema
-        const cidadeProxima = poema.match(/\((.*?)\)/)?.[1]; // Captura o nome dentro dos parênteses
-  
-        if (cidadeProxima) {
+      if (poema) {     // Quando existir a resposta extraimos dela a cidade mais próxima
+        
+        const cidadeProxima = poema.match(/\((.*?)\)/)?.[1]; // encontra o nome dentro dos parênteses e passa para a const
+
+        if (cidadeProxima) {                                            // quando encontra a cidade próxima seta o valor para cidadeMaisProxima
           console.log("Cidade mais próxima extraída:", cidadeProxima);
-          setCidadeMaisProxima(cidadeProxima);
-  
-          // Buscar coordenadas da cidade mais próxima
+          setCidadeMaisProxima(cidadeProxima);          //
+
+          // Buscar coordenadas da cidadeMaisPróxima
           const buscarCoordenadasCidadeProxima = async (cidade: string) => {
             try {
-              console.log("Buscando coordenadas para cidade mais próxima:", cidade);
+              console.log(
+                "Buscando coordenadas para cidade mais próxima:",
+                cidade
+              );
               const response = await axios.get(
                 `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
                   cidade
                 )}`
               );
-  
+
               if (response.data.length > 0) {
                 const { lat, lon } = response.data[0];
                 setCoords({ lat: parseFloat(lat), lon: parseFloat(lon) });
-  
-                console.log(`Cidade mais próxima: ${cidade} - Latitude: ${lat}, Longitude: ${lon}`);
-  
+
+                console.log(
+                  `Cidade mais próxima: ${cidade} - Latitude: ${lat}, Longitude: ${lon}`
+                );
+
                 // Aguarda 2 segundos antes de exibir o poema
                 setTimeout(() => {
                   setRespostaAI(poema);
@@ -116,10 +125,13 @@ const Mapa = () => {
                 console.error("Cidade mais próxima não encontrada.");
               }
             } catch (error) {
-              console.error("Erro ao buscar coordenadas da cidade mais próxima:", error);
+              console.error(
+                "Erro ao buscar coordenadas da cidade mais próxima:",
+                error
+              );
             }
           };
-  
+
           buscarCoordenadasCidadeProxima(cidadeProxima);
         } else {
           console.error("Nenhuma cidade litorânea válida foi encontrada.");
@@ -131,8 +143,7 @@ const Mapa = () => {
       console.error("Erro ao gerar resposta da IA:", error);
     }
   };
-  
-  
+
   // Função para buscar as coordenadas da cidade mais próxima
   const buscarCoordenadasCidadeProxima = async (cidade: string) => {
     try {
@@ -165,50 +176,44 @@ const Mapa = () => {
   };
 
   return (
-    <div  className="main">
+    <div className="main">
+      <div className="header>">
+        <h2 id="h2todosqueremos">todos queremos</h2>
+        <h1 id="h1">Viver Perto</h1>
 
-        <div className="header>">
-                <h2 id="h2todosqueremos">todos queremos</h2>
-                 <h1 id="h1">Viver Perto</h1>
-
-                    <h2 id="h2daquilo"> daquilo que nos faz bem</h2>
-
-
-
- 
-        </div>
-
-        <img src="/SOL.png"  className="sol"></img>
-
-
-        <div className="entradas">
-
-      <h2>Digite o nome da cidade onde você mora e descubra a praia mais perto:</h2>
-      <input
-        type="text"
-        value={praia}
-        onChange={(e) => setPraia(e.target.value)}
-        placeholder="Ex: Copacabana"
-      />
-      <button onClick={buscarCoordenadas}>Buscar</button>
-
+        <h2 id="h2daquilo"> daquilo que nos faz bem</h2>
       </div>
 
-      <MapContainer
-        center={[-25, -50]}
-        zoom={5}
-        id="map"
-      >
+      <img src="/SOL.png" className="sol"></img>
+
+      <div className="entradas">
+        <h2>
+          Digite o nome da cidade onde você mora e descubra a praia mais perto:
+        </h2>
+        <input
+          type="text"
+          value={praia}
+          onChange={(e) => setPraia(e.target.value)}
+          placeholder="Ex: Copacabana"
+        />
+        <button onClick={buscarCoordenadas}>Buscar</button>
+      </div>
+
+      <MapContainer center={[-25, -50]} zoom={5} id="map">
         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
         {coords && <BuscaPraia lat={coords.lat} lon={coords.lon} />}
-      </MapContainer>
+      </MapContainer> 
 
-      <a href="https://www.linkedin.com/in/gustavo-pizente-nazarine-69b6812b7/" target="_blank" className="contato">
-  Contato
-</a>
+      <a
+        href="https://www.linkedin.com/in/gustavo-pizente-nazarine-69b6812b7/"
+        target="_blank"
+        className="contato"
+      >
+        Contato
+      </a>
 
       <div>
-        {respostaAI && (
+        {respostaAI && (                                               // renderização condicional após existir resposta da IA
           <motion.div
             className="apiresponse"
             initial={{ opacity: 0, scale: 0.9 }}
@@ -216,7 +221,6 @@ const Mapa = () => {
             exit={{ opacity: 0, scale: 0.9 }}
             transition={{ duration: 0.5, ease: "easeOut" }}
           >
-
             <h2>{respostaAI}</h2>
             <h3>A praia de {cidadeMaisProxima} está perto!</h3>
 
@@ -227,7 +231,10 @@ const Mapa = () => {
             </div>
 
             <p>Encontre Opções de casas</p>
-            <button className="cliqueaqui" onClick={() => alert("Link da Empresa")}>
+            <button
+              className="cliqueaqui"
+              onClick={() => alert("Link da Empresa")}
+            >
               {" "}
               Clique Aqui{" "}
             </button>
