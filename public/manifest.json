@@ -3,12 +3,12 @@
   "name": "Viver Perto",
   "icons": [
     {
-      "src": "sol.svg",
+      "src": "public/sol.svg",
       "type": "image/svg+xml",
       "sizes": "192x192"
     },
     {
-      "src": "sol.svg",
+      "src": "public/sol.svg",
       "type": "image/svg+xml",
       "sizes": "512x512"
     }
