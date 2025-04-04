@@ -31,7 +31,7 @@
   height: 100vh; /* Ocupa toda a altura da tela */
   background-repeat: repeat-x; /* Faz a imagem se repetir horizontalmente */
   background-size: auto; /* Tamanho da imagem, pode ajustar conforme necessário */
-  animation: moveBackground 170s linear infinite; /* Movimento contínuo */
+  animation: moveBackground 90s linear infinite; /* Movimento contínuo */
 
 
 }
@@ -320,7 +320,7 @@ button:hover {
 
 .sol {
 
-  animation: App-logo-spin infinite 20s linear;
+  animation: App-logo-spin infinite 10s ease-in-out;
   margin: -5%;
 
 
